@@ -33,7 +33,7 @@ The variables are defined as follows:
 
 We will read in the data and look at the first few rows:
 ```{r}
-nbadata <- read_xlsx("basketball-1.xlsx")
+nbadata <- read_xlsx("basketball-1.xlsx", skip=1, col_names = c("Height(feet)","Weight(pounds)", "FieldGoal%", "FreeThrow%", "AveragePPG"))
 head(nbadata)
 ```
 Include a description of your hypothesis/question or predictive approach
