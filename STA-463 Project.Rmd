@@ -5,9 +5,9 @@ date: "5/2/2022"
 output: html_document
 ---
 
-```{r}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
-nbadata <- read_xlsx("basketball-1.xlsx")
 ```
 
 ## Each report should set out to do one of two things:
@@ -16,9 +16,30 @@ nbadata <- read_xlsx("basketball-1.xlsx")
 2. Predictive model. If the dataset you choose is large enough, you may develop a predictive model using approaches like training/test sets or cross-validation. The analysis should include an assessment of the quality of the model to predict out-of-sample data. Ideally, it would also include predictions for one or two interesting new data points. (This topic will be addressed after the exam.)
 
 ## Introduction
-Include a description of your hypothesis/question or predictive approach, as well as a basic description of the dataset and the variables of interest.
+This project will explore a dataset from The Official NBA Basketball Encyclopedia. The data were collected from 54 different NBA basketball players. The predictor variables of interest are height, weight, percent of successful field goals 
+out of 100 attempts, and percent of successful free throws out of 100 attempts. These are all used to predict the response variable, which is the average points scored per game.
 
+The variables are defined as follows:
+
+  * X1 = height of player (feet)
+
+  * X2 = weight of player (pounds)
+
+  * X3 = percent of successful field goals out of 100 attempts
+
+  * X4 = percent of successful free throws out of 100 attempts
+
+  * X5 = average points scored per game (the response)
+
+We will read in the data and look at the first few rows:
+```{r}
+nbadata <- read_xlsx("basketball-1.xlsx")
+head(nbadata)
+```
+Include a description of your hypothesis/question or predictive approach
 (Choose your hypothesis/goal carefully, because not all hypotheses will lend themselves to easy analysis. What are the tools we’ve developed so far? We can do tests on hypotheses regarding single parameters or groups of parameters. We can form models with interactions and/or higher-order terms. We can predict future observations and analyze the average response value for a particular set of predictors. Perhaps a few other things I haven’t mentioned. Can your hypothesis/goal be answered by a method we have developed?)
+
+The hypothesis we will explore in this project is _________.
 
 ## Exploratory Data Analysis (EDA)
 come after the introduction, and consist of plots (i.e. scatterplots) and/or tabular summaries of the raw data (for example: means and standard deviations of X and Y). The purpose of the EDA is to familiarize you and the reader with the data and to derive insight from the initial analysis. You should include some concise commentary about what you learned from the EDA.
