@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 ```
 
-## Each report should set out to do one of two things:
+## Each report should set out to do one of two things: (We will delete this part later, I just wanted to add the instructions in)
 
 1. Confirmatory multiple linear regression. Thoroughly address at least one research hypothesis or research question that is formed based on the description of the data or an initial exploration of it. This analysis can involve any hypothesis that can be tested using the methods we’ve developed.
 2. Predictive model. If the dataset you choose is large enough, you may develop a predictive model using approaches like training/test sets or cross-validation. The analysis should include an assessment of the quality of the model to predict out-of-sample data. Ideally, it would also include predictions for one or two interesting new data points. (This topic will be addressed after the exam.)
