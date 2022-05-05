@@ -28,7 +28,7 @@ The variables are defined as follows:
 
   * X3 = yrs.since.phd (years since PhD)
 
-  * X4 = yrs.servcie (years of service)
+  * X4 = yrs.service (years of service)
   
   * X5 = sex (categorical: Female, Male) 
 
