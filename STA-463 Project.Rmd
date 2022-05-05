@@ -10,6 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 ```
 
+```{r}
+salaries_data <- read.csv("~/Desktop/sta 463/salaries_data.csv")
+```
+
 ## (We will delete this part later, I just wanted to add the instructions in)
 
 1. Confirmatory multiple linear regression. Thoroughly address at least one research hypothesis or research question that is formed based on the description of the data or an initial exploration of it. This analysis can involve any hypothesis that can be tested using the methods we’ve developed.
