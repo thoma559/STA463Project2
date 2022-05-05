@@ -82,6 +82,16 @@ $\beta_0$ is the intercept term and $\beta_1$ is the slope for years of service,
 ```{r}
 salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data = salaries_data)
 summary(salary.fit)
+
+par(mfrow=c(2, 2))
+plot(rstandard(salary.fit) ~ predict(salary.fit), data=salaries_data)
+abline(h=0)
+abline(h=3)
+abline(h=-3)
+qqnorm(rstandard(salary.fit))
+abline(a=0, b=1)
+hist(rstandard(salary.fit))
+mtext("All Data", side = 1, line = -30, outer = TRUE)
 ```
 
 According to the output, we see that the interaction term between years of service and discipline is statistically significant as the p-value for the t-test is approximately 0.001 (less than 0.05). 
