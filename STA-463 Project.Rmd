@@ -51,6 +51,10 @@ salaries_data_new <- salaries_data %>%
   mutate(sex = as.numeric(sex))
 salaries_data_new$rank <- as.numeric(as.factor(salaries_data_new$rank))
 salaries_data_new
+
+salaries_data %>% 
+  ggplot() +
+  geom_boxplot(aes(y=salary, x=discipline, group=discipline))
 ```
 
 Then, we will look at the scatter plot matrix of our data:
