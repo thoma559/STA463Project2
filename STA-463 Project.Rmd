@@ -46,8 +46,21 @@ First, we will change the gender and discipline categorical predictors to be bin
 ```{r}
 salaries_data_new <- salaries_data %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
-  mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0"))
+  mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
+  mutate(discipline = as.numeric(discipline)) %>% 
+  mutate(sex = as.numeric(sex))
+
+salaries_data_new$rank <- as.numeric(as.factor(salaries_data_new$rank))
+
+salaries_data_new
 ```
+```{r}
+matrix <- pairs(~ salary + rank + discipline + yrs.since.phd + yrs.service + as.numeric(sex), data = salaries_data_new)
+
+
+cor(cbind(salaries_data_new$salary, salaries_data_new$rank, salaries_data_new$discipline, salaries_data_new$yrs.since.phd, salaries_data_new$yrs.service, salaries_data_new$sex))
+```
+
 Then, we will look at the scatter plot matrix of our data:
 
 ## Analysis
