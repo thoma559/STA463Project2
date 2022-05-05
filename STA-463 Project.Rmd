@@ -43,7 +43,7 @@ Here, we will perform a confirmatory multiple regression analysis to try to answ
 ## Exploratory Data Analysis (EDA)
 come after the introduction, and consist of plots (i.e. scatterplots) and/or tabular summaries of the raw data (for example: means and standard deviations of X and Y). The purpose of the EDA is to familiarize you and the reader with the data and to derive insight from the initial analysis. You should include some concise commentary about what you learned from the EDA.
 
-First, we will change the categorical predictors to be binary variables (0's and 1's):
+First, we will change the gender and discipline categorical predictors to be binary variables (0's and 1's):
 ```{r}
 salaries_data_new <- salaries_data %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
