@@ -54,6 +54,13 @@ Then, we will look at the scatter plot matrix of our data:
 ## Analysis
 state the model (or models) you will fit and the process (if any) you used to come to a final model. Include only output that is relevant. You should also check the assumptions of the model, and if they are seriously violated you should take appropriate remedial measures if possible.
 
+We fit the multiple linear regression model as given below:
+
+$$Y_i=\beta_0+\beta_1X_i+\beta_2X_{ii} + \beta_3X_iX_{ii}+\epsilon_i,\ i=1,...,16$$
+Here, $Y_i$ is the salary in dollars and $X_i$ is the years of service, $X_ii$ is the discipline variable that indicates if the professor works in the theoretical department (A) or the applied department (B). 
+We assume that the error terms ($\epsilon_i$) are normally distributed with mean 0 and variance $\sigma^2$ and $Cov(\epsilon_i,\epsilon_j) = 0$. 
+$\beta_0$ is the intercept term and $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline and $\beta_3$ is the interaction between years of service and discipline.
+
 ```{r}
 salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data = salaries_data)
 summary(salary.fit)
