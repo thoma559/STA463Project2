@@ -29,11 +29,12 @@ The variables are defined as follows:
 
   * X4 = yrs.servcie (years of service)
   
-  * X5 = sex (categorical: Female, Male 
+  * X5 = sex (categorical: Female, Male) 
 
 We will read in the data and look at the first few rows:
 ```{r}
 salaries_data <- read.csv("~/Desktop/sta 463/salaries_data.csv")
+head(salaries_data)
 ```
 
 Here, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: _________.
