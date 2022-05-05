@@ -10,37 +10,32 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 ```
 
-```{r}
-salaries_data <- read.csv("~/Desktop/sta 463/salaries_data.csv")
-```
-
 ## (We will delete this part later, I just wanted to add the instructions in)
 
 1. Confirmatory multiple linear regression. Thoroughly address at least one research hypothesis or research question that is formed based on the description of the data or an initial exploration of it. This analysis can involve any hypothesis that can be tested using the methods we’ve developed.
 
 ## Introduction
-This project will explore a dataset from The Official NBA Basketball Encyclopedia. The data were collected from 54 different NBA basketball players. The predictor variables of interest are height, weight, percent of successful field goals 
-out of 100 attempts, and percent of successful free throws out of 100 attempts. These are all used to predict the response variable, which is the average points scored per game.
+This project will explore a dataset concerning the 2008-2009 nine-month academic salaries for Assistant Professors, Associate Professors and Professors in a college in the U.S. The data consists of 397 observations with the predictor variables of interest as rank, discipline, years since Phd, years of service, and gender. These are all used to predict the response variable, which is the nine-month salary of professors in dollars.
 
 The variables are defined as follows:
 
-  * X1 = height of player (feet)
+  * Y = salary (dollars)
 
-  * X2 = weight of player (pounds)
+  * X1 = rank (categorical: AssocProf, Asstprof, Prof)
 
-  * X3 = percent of successful field goals out of 100 attempts
+  * X2 = discipline (categorical: A - theoretical, B - applied)
 
-  * X4 = percent of successful free throws out of 100 attempts
+  * X3 = yrs.since.phd (years since PhD)
 
-  * X5 = average points scored per game (the response)
+  * X4 = yrs.servcie (years of service)
+  
+  * X5 = sex (categorical: Female, Male 
 
 We will read in the data and look at the first few rows:
 ```{r}
-nbadata <- read_xlsx("basketball-1.xlsx", skip=1, col_names = c("Height(feet)","Weight(pounds)", "FieldGoal%", "FreeThrow%", "AveragePPG"))
+data <- read_xlsx("basketball-1.xlsx", skip=1, col_names = c("Height(feet)","Weight(pounds)", "FieldGoal%", "FreeThrow%", "AveragePPG"))
 head(nbadata)
 ```
-
-(Choose your hypothesis/goal carefully, because not all hypotheses will lend themselves to easy analysis. What are the tools we’ve developed so far? We can do tests on hypotheses regarding single parameters or groups of parameters. We can form models with interactions and/or higher-order terms. We can predict future observations and analyze the average response value for a particular set of predictors. Perhaps a few other things I haven’t mentioned. Can your hypothesis/goal be answered by a method we have developed?)
 
 Here, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: _________.
 
@@ -49,12 +44,6 @@ come after the introduction, and consist of plots (i.e. scatterplots) and/or tab
 
 ## Analysis
 state the model (or models) you will fit and the process (if any) you used to come to a final model. Include only output that is relevant. You should also check the assumptions of the model, and if they are seriously violated you should take appropriate remedial measures if possible.
-
-```{r}
-salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data = salaries_data)
-summary(salary.fit)
-confint(salary.fit)
-```
 
 ## Conclusion
 communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
