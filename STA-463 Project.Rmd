@@ -33,8 +33,7 @@ The variables are defined as follows:
 
 We will read in the data and look at the first few rows:
 ```{r}
-data <- read_xlsx("basketball-1.xlsx", skip=1, col_names = c("Height(feet)","Weight(pounds)", "FieldGoal%", "FreeThrow%", "AveragePPG"))
-head(nbadata)
+salaries_data <- read.csv("~/Desktop/sta 463/salaries_data.csv")
 ```
 
 Here, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: _________.
@@ -44,6 +43,11 @@ come after the introduction, and consist of plots (i.e. scatterplots) and/or tab
 
 ## Analysis
 state the model (or models) you will fit and the process (if any) you used to come to a final model. Include only output that is relevant. You should also check the assumptions of the model, and if they are seriously violated you should take appropriate remedial measures if possible.
+
+```{r}
+salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data = salaries_data)
+summary(salary.fit)
+```
 
 ## Conclusion
 communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
