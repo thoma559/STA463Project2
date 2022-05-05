@@ -37,7 +37,7 @@ salaries_data <- read.csv("~/Desktop/sta 463/salaries_data.csv")
 head(salaries_data)
 ```
 
-Here, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: _________.
+Here, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical and applied disciplines?
 
 ## Exploratory Data Analysis (EDA)
 come after the introduction, and consist of plots (i.e. scatterplots) and/or tabular summaries of the raw data (for example: means and standard deviations of X and Y). The purpose of the EDA is to familiarize you and the reader with the data and to derive insight from the initial analysis. You should include some concise commentary about what you learned from the EDA.
