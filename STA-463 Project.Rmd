@@ -79,5 +79,17 @@ salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data
 summary(salary.fit)
 ```
 
+According to the output, we see that the interaction term between years of service and discipline is statistically significant as the p-value for the t-test is approximately 0.001 (less than 0.05). 
+
+
+
+The fitted model for a professor in a theoretical field would be: 
+
+$$E(Y_i)=98038+526X_i,\ i=1,...,16$$
+where $Y_i$ is the salary and $X_i$ is the years of service. 
+
+The fitted model for a professor in an applied field would be: 
+$$E(Y_i)=(98038 + 857)+(526.8 + 695.2)X_i ,\ i=1,...,16$$
+
 ## Conclusion
 communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
