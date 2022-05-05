@@ -7,8 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(readxl)
-libray(tidyverse)
+library(tidyverse)
 ```
 
 ## (We will delete this part later, I just wanted to add the instructions in)
