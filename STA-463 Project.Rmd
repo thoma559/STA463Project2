@@ -51,10 +51,6 @@ salaries_data_new <- salaries_data %>%
   mutate(sex = as.numeric(sex))
 salaries_data_new$rank <- as.numeric(as.factor(salaries_data_new$rank))
 salaries_data_new
-
-salaries_data %>% 
-  ggplot() +
-  geom_boxplot(aes(y=salary, x=discipline, group=discipline))
 ```
 
 Then, we will look at the scatter plot matrix of our data:
@@ -63,6 +59,15 @@ matrix <- pairs(~ salary + rank + discipline + yrs.since.phd + yrs.service + as.
 cor(cbind(salaries_data_new$salary, salaries_data_new$rank, salaries_data_new$discipline, salaries_data_new$yrs.since.phd, salaries_data_new$yrs.service, salaries_data_new$sex))
 ```
 From the scatter plot matrix, we can see that Years since PhD and Years of Service are highly correlated with one another. This could be a sign of multicollinearity between the predictors. This result is further proven by the correlation matrix since the correlation coefficient for Years of service and Years since PhD is 0.9, which suggests a very strong, positive linear trend between the two variables. There may also be correlation between Years since PhD and Salary, since these points follow a slight linear trend in the plots. The correlation coefficient for Salary and Years since PhD is 0.4, which suggests a fairly weak, positive linear trend between the two.
+
+Now we will also look the distribution of salaries based on the two disciplines:
+```{r}
+salaries_data %>% 
+  ggplot() +
+  geom_boxplot(aes(y=salary, x=discipline, group=discipline))
+```
+
+TYPE ABOUT BOX PLOT
 
 ## Analysis
 state the model (or models) you will fit and the process (if any) you used to come to a final model. Include only output that is relevant. You should also check the assumptions of the model, and if they are seriously violated you should take appropriate remedial measures if possible.
