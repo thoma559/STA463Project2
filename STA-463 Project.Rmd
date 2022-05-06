@@ -129,6 +129,7 @@ confint(salary.fit)
 ```
 
 We are 95% confident that for every one year increase in service, the increase in the salary of a professor in an applied field would be between 270.7427 and 1119.5875 dollars more than the increase in the salary of a professor in a theoretical field. 
+Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary differs for professors in applied and theoretical fields.
 
 ## Conclusion
 communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
