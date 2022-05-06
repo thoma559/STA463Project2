@@ -80,6 +80,7 @@ We assume that the error terms ($\epsilon_i$) are normally distributed with mean
 $\beta_0$ is the intercept term and $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline and $\beta_3$ is the interaction between years of service and discipline.
 
 ```{r}
+library(car)
 salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data = salaries_data)
 summary(salary.fit)
 
