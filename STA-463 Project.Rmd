@@ -122,5 +122,13 @@ where $Y_i$ is the salary and $X_i$ is the years of service.
 The fitted model for a professor in an applied field would be: 
 $$E(Y_i)=(98038 + 857)+(526.8 + 695.2)X_i ,\ i=1,...,16$$
 
+We also look at the confidence interval of the interaction term between years of service and discipline. 
+
+```{r}
+confint(salary.fit)
+```
+
+We are 95% confident that for every one year increase in service, the increase in the salary of a professor in an applied field would be between 270.7427 and 1119.5875 dollars more than the increase in the salary of a professor in a theoretical field. 
+
 ## Conclusion
 communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
