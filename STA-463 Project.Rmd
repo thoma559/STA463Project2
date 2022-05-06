@@ -93,6 +93,21 @@ qqnorm(rstandard(salary.fit))
 abline(a=0, b=1)
 hist(rstandard(salary.fit))
 mtext("All Data", side = 1, line = -30, outer = TRUE)
+
+
+levs=hatvalues(salary.fit)
+plot(levs,ylab="leverages", xlab="observation")
+
+dffits.mr =dffits(salary.fit)
+plot(dffits.mr,ylab="DFFITS", xlab="Observation")
+
+dfbetas.mr = dfbetas(salary.fit)
+plot(dfbetas.mr[,2], ylab="DFBETAS x1")
+
+cook.mr = cooks.distance(salary.fit)
+plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
+
+vif(salary.fit)
 ```
 
 According to the output, we see that the interaction term between years of service and discipline is statistically significant as the p-value for the t-test is approximately 0.001 (less than 0.05). 
