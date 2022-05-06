@@ -8,11 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(car)
 ```
-
-## (We will delete this part later, I just wanted to add the instructions in)
-
-1. Confirmatory multiple linear regression. Thoroughly address at least one research hypothesis or research question that is formed based on the description of the data or an initial exploration of it. This analysis can involve any hypothesis that can be tested using the methods we’ve developed.
 
 ## Introduction
 This project will explore a dataset concerning the 2008-2009 nine-month academic salaries for Assistant Professors, Associate Professors and Professors in a college in the U.S. The data consists of 397 observations with the predictor variables of interest as rank, discipline, years since Phd, years of service, and gender. These are all used to predict the response variable, which is the nine-month salary of professors in dollars.
@@ -29,61 +26,61 @@ The variables are defined as follows:
 
   * X4 = yrs.service (years of service)
   
-  * X5 = sex (categorical: Female, Male) 
+  * X5 = sex (categorical: Female, Male)
 
 We will read in the data and look at the first few rows:
-```{r}
-salaries_data <- read.csv("~/Desktop/sta 463/salaries_data.csv")
+```{r, echo=FALSE}
+salaries_data <- read.csv("salaries_data.csv")
 head(salaries_data)
 ```
 
-Here, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical and applied disciplines?
+In this project, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical versus applied disciplines?
 
 ## Exploratory Data Analysis (EDA)
-come after the introduction, and consist of plots (i.e. scatterplots) and/or tabular summaries of the raw data (for example: means and standard deviations of X and Y). The purpose of the EDA is to familiarize you and the reader with the data and to derive insight from the initial analysis. You should include some concise commentary about what you learned from the EDA.
-
-First, we will change the categorical predictors to be binary variables (0's and 1's) (rank will have 3 levels: Professor is level 3, Assistant Professor is level 2, and Associate Professor is 1):
-```{r}
+To explore the data, we will first change the categorical predictors to be binary variables (0's and 1's). Rank will have 3 levels: Professor is level 3, Assistant Professor is level 2, and Associate Professor is 1:
+```{r, echo=FALSE}
 salaries_data_new <- salaries_data %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
   mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
   mutate(discipline = as.numeric(discipline)) %>% 
   mutate(sex = as.numeric(sex))
 salaries_data_new$rank <- as.numeric(as.factor(salaries_data_new$rank))
-salaries_data_new
+head(salaries_data_new)
 ```
 
-Then, we will look at the scatter plot matrix of our data:
-```{r}
+Then, we will look at the scatter plot matrix of our data along with the correlation matrix:
+```{r, echo=FALSE}
 matrix <- pairs(~ salary + rank + discipline + yrs.since.phd + yrs.service + as.numeric(sex), data = salaries_data_new)
 cor(cbind(salaries_data_new$salary, salaries_data_new$rank, salaries_data_new$discipline, salaries_data_new$yrs.since.phd, salaries_data_new$yrs.service, salaries_data_new$sex))
 ```
-From the scatter plot matrix, we can see that Years since PhD and Years of Service are highly correlated with one another. This could be a sign of multicollinearity between the predictors. This result is further proven by the correlation matrix since the correlation coefficient for Years of service and Years since PhD is 0.9, which suggests a very strong, positive linear trend between the two variables. There may also be correlation between Years since PhD and Salary, since these points follow a slight linear trend in the plots. The correlation coefficient for Salary and Years since PhD is 0.4, which suggests a fairly weak, positive linear trend between the two.
 
-Now we will also look the distribution of salaries based on the two disciplines:
-```{r}
+From the scatter plot matrix, we can see that Years since PhD and Years of Service are highly correlated with one another. This could be a sign of multicollinearity between the predictors. This result is further proven by the correlation matrix since the correlation coefficient for Years of service and Years since PhD is 0.9, which suggests a very strong, positive linear trend between the two variables. There may also be correlation between Years since PhD and Salary, since these points follow a slight linear trend in the plots. The correlation coefficient for Salary and Years since PhD is 0.4, which suggests a fairly weak, positive linear trend between the two.   
+
+Now we will also look the distribution of salaries based on the two different disciplines:
+```{r, echo=FALSE}
 salaries_data %>% 
   ggplot() +
   geom_boxplot(aes(y=salary, x=discipline, group=discipline))
 ```
 
-From the box plots, we can see that the range of salaries for theoretical disciplines (A) and applied disciplines (B) are very similar. They both range from around +50,000 dollars to around 180,000 dollars. The mean salary for applied disciplines is slightly higher than the mean salary for theoretical disciplines. There are also more outliers in the theoretical discipline salary plot, but there is one possibly high leverage point in the applied disciplines plot that could be pulling the mean salary up towards itself.
+From the box plots, we can see that the range of salaries for theoretical disciplines (A) and applied disciplines (B) are very similar. They both range from around +50,000 dollars to around 180,000 dollars. The mean salary for applied disciplines is slightly higher than the mean salary for theoretical disciplines. There are also more outliers in the theoretical discipline salary plot, but there is one possibly high leverage point in the applied disciplines plot that could be pulling the mean salary up towards itself. 
+
+So, we now know that although the means of salaries between the two disciplines seem close, they are not exactly the same. So, we will proceed to fit a model to reflect our hypothesis.
 
 ## Analysis
-state the model (or models) you will fit and the process (if any) you used to come to a final model. Include only output that is relevant. You should also check the assumptions of the model, and if they are seriously violated you should take appropriate remedial measures if possible.
-
-We fit the multiple linear regression model as given below:
+After exploring our data, we now fit the multiple linear regression model as given below:
 
 $$Y_i=\beta_0+\beta_1X_i+\beta_2X_{ii} + \beta_3X_iX_{ii}+\epsilon_i,\ i=1,...,16$$
-Here, $Y_i$ is the salary in dollars and $X_i$ is the years of service, $X_ii$ is the discipline variable that indicates if the professor works in the theoretical department (A) or the applied department (B). 
-We assume that the error terms ($\epsilon_i$) are normally distributed with mean 0 and variance $\sigma^2$ and $Cov(\epsilon_i,\epsilon_j) = 0$. 
-$\beta_0$ is the intercept term and $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline and $\beta_3$ is the interaction between years of service and discipline.
+Here, $Y_i$ is the salary in dollars. $X_i$ is the years of service that the employee has worked, $X_{ii}$ is the discipline variable that indicates if the professor works in the theoretical department (A) or the applied department (B). $\beta_0$ is the intercept term, $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline, and $\beta_3$ is the interaction between years of service and discipline.
 
-```{r}
-library(car)
+For this model, we assume that the error terms ($\epsilon_i$) are normally distributed with mean 0 and variance $\sigma^2$ and $Cov(\epsilon_i,\epsilon_j) = 0$. 
+
+```{r, echo=FALSE}
 salary.fit = lm(salary ~ yrs.service + discipline + yrs.service:discipline, data = salaries_data)
-summary(salary.fit)
+```
 
+Now we will check the assumptions of our model:
+```{r, echo=FALSE}
 par(mfrow=c(2, 2))
 plot(rstandard(salary.fit) ~ predict(salary.fit), data=salaries_data)
 abline(h=0)
@@ -92,46 +89,51 @@ abline(h=-3)
 qqnorm(rstandard(salary.fit))
 abline(a=0, b=1)
 hist(rstandard(salary.fit))
-mtext("All Data", side = 1, line = -30, outer = TRUE)
+```
 
+The model form assumption is met based on the scatterplot matrix above. There is slight fanning in a few of the plots, but for the most part, there is enough random scatter to say the model form is correct. The normality assumption is also met since the histogram follows a roughly bell-shaped curve, and the QQ plot observations follow the trend line with very limited skew. The constant variance assumption is also met since there is random scatter in the residuals plot. There does seem to be slight fanning, but not enough to be concerning. From the same plot, we also see that there could be potential outliers. We will investigate these points more in the plots below. We will also assume that these observations were obtained independently.
 
+We will check the Cook's Distance, DFBETAS, and DFFITS plots along with the Variance Inflation Factors (VIFs) to further investigate potential outliers:
+```{r, echo=FALSE}
+par(mfrow=c(2, 2))
 levs=hatvalues(salary.fit)
 plot(levs,ylab="leverages", xlab="observation")
-
 dffits.mr =dffits(salary.fit)
 plot(dffits.mr,ylab="DFFITS", xlab="Observation")
-
 dfbetas.mr = dfbetas(salary.fit)
 plot(dfbetas.mr[,2], ylab="DFBETAS x1")
-
 cook.mr = cooks.distance(salary.fit)
 plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
-
 vif(salary.fit)
+```
+
+From these plots, ______.
+
+Finally, we will call the summary output of our data:
+```{r, echo=FALSE}
+summary(salary.fit)
 ```
 
 According to the output, we see that the interaction term between years of service and discipline is statistically significant as the p-value for the t-test is approximately 0.001 (less than 0.05). 
 
-
-
-The fitted model for a professor in a theoretical field would be: 
+So, the fitted model for a professor in a theoretical field would be: 
 
 $$E(Y_i)=98038+526X_i,\ i=1,...,16$$
 where $Y_i$ is the salary and $X_i$ is the years of service. 
 
-The fitted model for a professor in an applied field would be: 
+And the fitted model for a professor in an applied field would be: 
 $$E(Y_i)=(98038 + 857)+(526.8 + 695.2)X_i ,\ i=1,...,16$$
 
-We also look at the confidence interval of the interaction term between years of service and discipline. 
+We also obtain the confidence interval of the interaction term between years of service and discipline. 
 
-```{r}
+```{r, echo=FALSE}
 confint(salary.fit)
 ```
 
-We are 95% confident that for every one year increase in service, the increase in the salary of a professor in an applied field would be between 270.7427 and 1119.5875 dollars more than the increase in the salary of a professor in a theoretical field. 
-Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary differs for professors in applied and theoretical fields.
+From this interval, we are 95% confident that for every one year increase in service, the increase in the salary of a professor in an applied field would be between 270.7427 and 1119.5875 dollars more than the increase in the salary of a professor in a theoretical field. 
+Since 0 is not included within the interval, we can again conclude that the relationship between years of service and salary does differ for professors in applied and theoretical fields.
 
 ## Conclusion
-communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
+Based on our results, we can conclude that there is a significant difference between the salaries of professors within in the applied field vs. the salaries of professors within the theoretical field. We can see that professors within the applied field make more money  on average for every one year increase in years of service. This is what we would expect because most of the time professors within the applied fields, such as business or engineering, make more because they are purposefully picked from the real applied work force to teach students. Therefore these professors would require a higher salary than the theoretical professors who deal more with research as opposed to real world applications. Thus, universities are less likely to have to pay more for theoretical professors as opposed to applied professors.
 
-We can conclude that there is a significant difference between the salary of professors within in the applied field vs. the theoretical field. We can see that professors within the applied field make on average more money for every one year increase in service. This makes sense because often professors within the applied fields such as business make more because professors may be picked from the real applied work force, to teach students. Therefore these professors would require a higher salary than the theoretical professors who are more into research. Thus, professors in the theoretical field may have always been professors because they want to research so universities are less likely to have to pay more for these professors.
+A possible limitation of this project is that there is ambiguity about how the data were collected. We assumed previously that all observations were independent although it is not completely clear how they were collected. However, since the dataset is so large, we think it is safe to make this assumption for the sake of our model. 
