@@ -133,3 +133,5 @@ Since 0 is not within the interval, we can again conclude that the relationship 
 
 ## Conclusion
 communicate in clear terms the results of your analysis as they pertain to your original research hypothesis. Was it confirmed or was there a lack of evidence? Are you making your conclusion in a way that does not include unnecessary statistical jargon?
+
+We can conclude that there is a significant difference between the salary of professors within in the applied field vs. the theoretical field. We can see that professors within the applied field make on average more money for every one year increase in service. This makes sense because often professors within the applied fields such as business make more because professors may be picked from the real applied work force, to teach students. Therefore these professors would require a higher salary than the theoretical professors who are more into research. Thus, professors in the theoretical field may have always been professors because they want to research so universities are less likely to have to pay more for these professors.
