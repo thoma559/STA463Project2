@@ -125,7 +125,9 @@ For our hypothesis question, we test the following hypotheses:
 Null Hypothesis: $\beta_4 = 0$
 Alternate Hypothesis: $\beta_4 \neq 0$
 
-According to the output, we reject the null hypothesis as the p-value for the t-test is approximately 0.001 (less than 0.05).Thus, we conclude that the interaction term between years of service and discipline is statistically significant. 
+According to the output, we reject the null hypothesis as the p-value for the t-test is approximately 0.001 (less than 0.05).We conclude that the interaction term between years of service and discipline is statistically significant. 
+
+Thus, for every one year increase in service, the increase in the mean salary of professors of a particular gender in an applied discipline would be 712.2 dollars more than the increase in the mean salary of professors of the same gender in a theoretical discipline. 
 
 So, the fitted model to predict the salary of a professor in a theoretical field would be: 
 
@@ -146,7 +148,8 @@ From this interval, we are 95% confident that for every one year increase in ser
 Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary does differ for professors in applied and theoretical fields.
 
 ## Conclusion
-Based on our results, we can conclude that the increase in salary per year of service is higher for professors within the applied field as compared to professors in the theoretical field. This means 
+
+Based on our results, we can conclude that the increase in salary per year of service is higher for professors within the applied field as compared to professors in the theoretical field. This means that a professor in an applied field has a higher earning curve as compared to the professors in a theoretical field. For instance, if two professors of the same gender join the university with the same starting salary, the professor teaching in an applied field will have a higher salary compared to the professor teaching in a theoretical field as more years pass by.   
 
 A possible limitation of this project is that there is ambiguity about how the data was collected. We assumed previously that all observations were independent although it is not completely clear how it was collected. However, since the dataset is so large, we think it is safe to make this assumption for the sake of our model. 
 
@@ -161,4 +164,3 @@ salary.fit.2 = lm(salary ~ yrs.service + discipline + sex + rank + yrs.service:d
 par(mfrow=c(2, 2))
 plot(rstandard(salary.fit.2) ~ predict(salary.fit.2), data=salaries_data)
 ```
-
