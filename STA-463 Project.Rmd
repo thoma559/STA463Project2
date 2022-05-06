@@ -142,11 +142,11 @@ We also obtain the confidence interval of the interaction term between years of 
 confint(salary.fit)
 ```
 
-From this interval, we are 95% confident that for every one year increase in service, the increase in the salary of a professor in an applied field would be between 288.93 and 1135.56 dollars more than the increase in the salary of a professor in a theoretical field. 
+From this interval, we are 95% confident that for every one year increase in service, the increase in the mean salary of professors of a particular gender in applied field would be between 288.93 and 1135.56 dollars more than the increase in the mean salary of professors of the same gender in the theoretical field. 
 Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary does differ for professors in applied and theoretical fields.
 
 ## Conclusion
-Based on our results, we can conclude that there is a significant difference between the relationship between years of service and salaries for the professors in the applied field vs.the professors in the theoretical field. We can see that the increase in salary per year of service is higher for professors within the applied field as compared to professors in the theoretical field. 
+Based on our results, we can conclude that the increase in salary per year of service is higher for professors within the applied field as compared to professors in the theoretical field. This means 
 
 A possible limitation of this project is that there is ambiguity about how the data was collected. We assumed previously that all observations were independent although it is not completely clear how it was collected. However, since the dataset is so large, we think it is safe to make this assumption for the sake of our model. 
 
