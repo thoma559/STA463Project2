@@ -129,12 +129,12 @@ According to the output, we reject the null hypothesis as the p-value for the t-
 
 So, the fitted model to predict the salary of a professor in a theoretical field would be: 
 
-$$E(Y_i)=90700.5+485.6X_i + 9060.4X_{iii},\ i=1,...,16$$
+$$\hat{Y_i}=90700.5+485.6X_i + 9060.4X_{iii},\ i=1,...,16$$
 
 And the fitted model to predict the salary of a professor in an applied field would be: 
-$$E(Y_i)=(90700.5 + 392.9)+(485.6 + 392.9 )X_i + 9060.4X_{iii},\ i=1,...,16$$
-$$E(Y_i)=91093.4+878.5X_i + 9060.4X_{iii},\ i=1,...,16$$
-where $Y_i$ is the salary, $X_i$ is the years of service, and $X_{iii}$ is the sex variable. 
+$$\hat{Y_i}=(90700.5 + 392.9)+(485.6 + 392.9 )X_i + 9060.4X_{iii},\ i=1,...,16$$
+$$\hat{Y_i}=91093.4+878.5X_i + 9060.4X_{iii},\ i=1,...,16$$
+where $\hat{Y_i}$ is the estimated salary, $X_i$ is the years of service, and $X_{iii}$ is the sex variable. 
 
 We also obtain the confidence interval of the interaction term between years of service and discipline. 
 
@@ -142,7 +142,7 @@ We also obtain the confidence interval of the interaction term between years of 
 confint(salary.fit)
 ```
 
-From this interval, we are 95% confident that for every one year increase in service, the increase in the mean salary of professors of a particular gender in applied field would be between 288.93 and 1135.56 dollars more than the increase in the mean salary of professors of the same gender in the theoretical field. 
+From this interval, we are 95% confident that for every one year increase in service, the increase in the mean salary of professors of a particular gender in an applied field would be between 288.93 and 1135.56 dollars more than the increase in the mean salary of professors of the same gender in a theoretical field. 
 Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary does differ for professors in applied and theoretical fields.
 
 ## Conclusion
