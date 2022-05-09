@@ -64,7 +64,7 @@ From the scatter plot matrix, we can see that years since PhD and years of Servi
 There may also be correlation between years of service and salary, since these points follow a slight linear trend in the plots. The correlation coefficient for salary and years of service is 0.3, which suggests a fairly weak, positive linear trend between the two. Similarly, years since PhD and salary are also linearly related as they have a correlation coefficient of 0.4.
 Now, we look at categorical variables that include sex, rank and discipline. Sex seems to have a weak positive relation with salary, with years since PhD and with years of service. This suggests that males are more likely to be paid more, have more experience in teaching, and have greater years since PhD compared to females. Rank has a moderate positive relationship with salary, with years since PhD and with years of service. This could be a sign of multicollinearity between the predictor variables.
 
-Discipline of the professor have a weak negative relation with salary which suggests that professors in the applied field are likely to earn more than the professors in theoretical field. However, discipline of the professor has a weak positive relation with years of service which suggests that the professors in the theoretical field are likely to have more experience compared to professors in the applied field. We would be looking further into these two relationships in our analysis.  
+Discipline of the professor has a weak negative relation with salary which suggests that professors in the applied field are likely to earn more than the professors in theoretical field. However, discipline of the professor has a weak positive relation with years of service which suggests that the professors in the theoretical field are likely to have more experience compared to professors in the applied field. We would be looking further into these two relationships in our analysis.  
 
 Now we will also look the distribution of salaries grouped by the two different disciplines:
 ```{r, echo=FALSE}
@@ -84,7 +84,7 @@ Since we are trying to understand how the relationship between years of service 
 
 we now fit the multiple linear regression model as given below:
 
-$$Y_i=\beta_0+\beta_1X_i+\beta_2X_{ii} +\beta_3X_{iii} +\beta_4X_iX_{ii}+\epsilon_i,\ i=1,...,16$$
+$$Y_i=\beta_0+\beta_1X_{1i}+\beta_2X_{2i} +\beta_3X_{3i} +\beta_4X_{1i}X_{2i}+\epsilon_i,\ i=1,...,397$$
 Here, $Y_i$ is the salary in dollars. $X_i$ is the years of service that the employee has worked, $X_{ii}$ is the discipline variable that indicates if the professor works in the theoretical department (A) or the applied department (B), $X_{iii}$ is the sex variable that indicates if the professor is a Male or Female. $\beta_0$ is the intercept term, $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline, $\beta_3$ is the slope for sex, and $\beta_4$ is the interaction between years of service and discipline.
 
 For this model, we assume that the error terms ($\epsilon_i$) are normally distributed with mean 0 and variance $\sigma^2$ and $Cov(\epsilon_i,\epsilon_j) = 0$. 
@@ -118,10 +118,11 @@ qqnorm(rstandard(salary.fit))
 qqline(rstandard(salary.fit))
 ```
 
-The model form assumption is met based on the scatterplot matrix above. There is slight fanning in a few of the plots, but for the most part, there is enough random scatter to say the model form is correct. The normality assumption is also met since the histogram of standardized residuals follows a roughly bell-shaped curve, and the points in the QQ plot do not deviate from the trend line. The constant variance assumption is also met since there is random scatter in the residuals plot. There does seem to be slight fanning, but not enough to be concerning. From the same plot, we also see that there could be potential outliers. We will investigate these points more in the plots below. We will also assume that these observations were obtained independently.
+The model form assumption is met based on the scatterplot matrix above. There is slight fanning in a few of the plots, but for the most part, there is enough random scatter to say the model form is correct. The normality assumption is also met since the histogram of standardized residuals follows a roughly bell-shaped curve, and the points in the QQ plot do not deviate from the trend line. The constant variance assumption is also met since there is random scatter in the residuals plot. There does seem to be slight fanning, but not enough to be concerning. From the same plot, we also see that there could be potential outliers that are influential. We will investigate these points more in the plots below. We will also assume that these observations were obtained independently.
 
 We will check the Cook's Distance, DFBETAS, and DFFITS plots along with the Variance Inflation Factors (VIFs) to further investigate potential outliers:
-```{r, echo=FALSE}
+
+```{r, echo=FALSE, warning=FALSE}
 par(mfrow=c(2, 2))
 levs=hatvalues(salary.fit)
 plot(levs,ylab="leverages", xlab="observation")
@@ -132,18 +133,39 @@ plot(dfbetas.mr[,2], ylab="DFBETAS x1")
 cook.mr = cooks.distance(salary.fit)
 plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
 vif(salary.fit)
+```
 
-dataFrame <- salaries_data[abs(levs)<.05,]
+The way to measure whether a point has too high of leverage, is to use the equation $3*\frac{p}{n}$. In our case we have 5 β parameters and 397 observations. Therefore leverage points of greater than .03778 should be removed to evaluate how much of difference these observations have on the output.
+
+
+```{r, echo=FALSE}
+dataFrame <- salaries_data[abs(levs)<.03778,]
 fit <- lm(salary ~ yrs.service + discipline + sex + yrs.service:discipline, data = dataFrame)
 fit
 
-dataFrame
 dataFramesex <- dataFrame %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
   mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
   mutate(discipline = as.numeric(discipline)) %>% 
   mutate(sex = as.numeric(sex))
+```
 
+```{r, echo=FALSE, warning=FALSE, }
+par(mfrow=c(2, 2))
+levs=hatvalues(fit)
+plot(levs,ylab="leverages", xlab="observation")
+dffits.mr =dffits(salary.fit)
+plot(dffits.mr,ylab="DFFITS", xlab="Observation")
+dfbetas.mr = dfbetas(fit)
+plot(dfbetas.mr[,2], ylab="DFBETAS x1")
+cook.mr = cooks.distance(fit)
+plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
+vif(fit)
+```
+
+We can see that our leverage plot looks much better with the high leverage points being eliminated so now we will look to see if our assumptions are stronger without the influential points.
+
+```{r, echo=FALSE}
 par(mfrow=c(2,3))
 plot(fit$fitted, rstandard(fit), xlab='Fitted values', ylab='Standardized Residuals')
 plot(dataFrame$yrs.service, rstandard(fit), xlab='yrs.service',
@@ -156,16 +178,21 @@ plot(dataFramesex$discipline, rstandard(fit), xlab='discipline',
      ylab='Standardized Residuals')
 qqnorm(rstandard(fit))
 qqline(rstandard(fit))
+hist(rstandard(fit))
 ```
 
-From these plots, we can see that when we eliminated our most influential observation in the data we can see this did not make a difference in our assumptions. The normality assumption looks he same and like stated above we believe it looks pretty good. Our residual plots look nearly identical, and again as stated above we believe our constant variance assumption looks pretty good with only slight fanning. The model form looks appropriate like stated above. Therefore getting rid of the most influential point does not seem to make our assumptions stronger and there does not seem to be a reason to get rid of this most influential point.
+We can now evaluate our assumptions based on eliminating our most influential observations from the data. To see if our assumptions have gotten better we will reevaluate them. We should look to see if the correct model and constant variance assumptions are met. Looking at the standardized residual plots we don't see too many trends that represent fanning or tunneling that are concerning so this assumption looks to be met. The data has a lot of data so the clustering of the data in the center is not of concern. Therefore comparing the graphs from all the observations we do not see much of a difference in our assumption of constant variance and model form. 
+
+The normality assumption looks a little better when comparing the histograms because without the influential points the histogram is much more symmetric. The QQ plot looks the same between the two models.
+
+The last assumption should focus on the influential points which was the whole point of this model so we know they have been taken care of. Therefore getting rid of the most influential points does not seem to make our assumptions much stronger and there does not seem to be a reason to get rid of this most influential points. 
 
 Finally, we will call the summary output of our data:
 ```{r, echo=FALSE}
 summary(salary.fit)
 summary(fit)
 ```
-We can see that the summary outputs are very similar and again affirming out intuition that we do not need get rid of the most influential point. So we will now continue with the fitted model of all our observations.
+We can see that the summary outputs are very similar and again affirming out intuition that we do not need get rid of the most influential points. So we will now continue with the fitted model of all our observations.
 
 For our hypothesis question, we test the following hypotheses: 
 Null Hypothesis: $\beta_4 = 0$
@@ -210,15 +237,3 @@ salary.fit.2 = lm(salary ~ yrs.service + discipline + sex + rank + yrs.service:d
 par(mfrow=c(2, 2))
 plot(rstandard(salary.fit.2) ~ predict(salary.fit.2), data=salaries_data)
 ```
-© 2022 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
