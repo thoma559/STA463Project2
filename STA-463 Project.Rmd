@@ -7,7 +7,11 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(rlang)
+library(haven)
 library(tidyverse)
+library(broom)
+library(dplyr)
 library(car)
 ```
 
@@ -30,6 +34,8 @@ The variables are defined as follows:
 
 We will read in the data and look at the first few rows:
 ```{r, echo=FALSE}
+library(cli)
+library(dplyr)
 salaries_data <- read.csv("salaries_data.csv")
 head(salaries_data)
 ```
@@ -39,7 +45,7 @@ In this project, we will perform a confirmatory multiple regression analysis to 
 ## Exploratory Data Analysis (EDA)
 To explore the data, we will first change the categorical predictors to be binary variables (0's and 1's). Rank will have 3 levels: Professor is level 3, Assistant Professor is level 2, and Associate Professor is 1:
 ```{r, echo=FALSE}
-salaries_data_new <- salaries_data %>%
+  salaries_data_new <- salaries_data %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
   mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
   mutate(discipline = as.numeric(discipline)) %>% 
@@ -97,6 +103,19 @@ abline(h=-3)
 qqnorm(rstandard(salary.fit))
 abline(a=0, b=1)
 hist(rstandard(salary.fit))
+
+par(mfrow=c(2,3))
+plot(salary.fit$fitted, rstandard(salary.fit), xlab='Fitted values', ylab='Standardized Residuals')
+plot(salaries_data$yrs.service, rstandard(salary.fit), xlab='yrs.service',
+     ylab='Standardized Residuals')
+plot(salaries_data_new$sex, rstandard(salary.fit), xlab='sex',
+     ylab='Standardized Residuals')
+plot(salaries_data$yrs.service*salaries_data_new$discipline, rstandard(salary.fit), xlab='interaction',
+     ylab='Standardized Residuals')
+plot(salaries_data_new$discipline, rstandard(salary.fit), xlab='discipline',
+     ylab='Standardized Residuals')
+qqnorm(rstandard(salary.fit))
+qqline(rstandard(salary.fit))
 ```
 
 The model form assumption is met based on the scatterplot matrix above. There is slight fanning in a few of the plots, but for the most part, there is enough random scatter to say the model form is correct. The normality assumption is also met since the histogram of standardized residuals follows a roughly bell-shaped curve, and the points in the QQ plot do not deviate from the trend line. The constant variance assumption is also met since there is random scatter in the residuals plot. There does seem to be slight fanning, but not enough to be concerning. From the same plot, we also see that there could be potential outliers. We will investigate these points more in the plots below. We will also assume that these observations were obtained independently.
@@ -113,14 +132,41 @@ plot(dfbetas.mr[,2], ylab="DFBETAS x1")
 cook.mr = cooks.distance(salary.fit)
 plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
 vif(salary.fit)
+
+dataFrame <- salaries_data[abs(levs)<.05,]
+fit <- lm(salary ~ yrs.service + discipline + sex + yrs.service:discipline, data = dataFrame)
+fit
+
+dataFrame
+dataFramesex <- dataFrame %>%
+  mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
+  mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
+  mutate(discipline = as.numeric(discipline)) %>% 
+  mutate(sex = as.numeric(sex))
+
+par(mfrow=c(2,3))
+plot(fit$fitted, rstandard(fit), xlab='Fitted values', ylab='Standardized Residuals')
+plot(dataFrame$yrs.service, rstandard(fit), xlab='yrs.service',
+     ylab='Standardized Residuals')
+plot(dataFramesex$sex, rstandard(fit), xlab='sex',
+     ylab='Standardized Residuals')
+plot(dataFrame$yrs.service*dataFramesex$discipline, rstandard(fit), xlab='interaction',
+     ylab='Standardized Residuals')
+plot(dataFramesex$discipline, rstandard(fit), xlab='discipline',
+     ylab='Standardized Residuals')
+qqnorm(rstandard(fit))
+qqline(rstandard(fit))
 ```
 
-From these plots, ______.
+From these plots, we can see that when we eliminated our most influential observation in the data we can see this did not make a difference in our assumptions. The normality assumption looks he same and like stated above we believe it looks pretty good. Our residual plots look nearly identical, and again as stated above we believe our constant variance assumption looks pretty good with only slight fanning. The model form looks appropriate like stated above. Therefore getting rid of the most influential point does not seem to make our assumptions stronger and there does not seem to be a reason to get rid of this most influential point.
 
 Finally, we will call the summary output of our data:
 ```{r, echo=FALSE}
 summary(salary.fit)
+summary(fit)
 ```
+We can see that the summary outputs are very similar and again affirming out intuition that we do not need get rid of the most influential point. So we will now continue with the fitted model of all our observations.
+
 For our hypothesis question, we test the following hypotheses: 
 Null Hypothesis: $\beta_4 = 0$
 Alternate Hypothesis: $\beta_4 \neq 0$
@@ -164,3 +210,15 @@ salary.fit.2 = lm(salary ~ yrs.service + discipline + sex + rank + yrs.service:d
 par(mfrow=c(2, 2))
 plot(rstandard(salary.fit.2) ~ predict(salary.fit.2), data=salaries_data)
 ```
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
