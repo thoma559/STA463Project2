@@ -156,7 +156,7 @@ dataFramesex <- dataFrame %>%
   mutate(sex = as.numeric(sex))
 ```
 
-Here are the same plots with any potential outliers removed:
+Here are the same plots with influential points removed:
 ```{r, echo=FALSE, warning=FALSE}
 # replot with outliers removed
 par(mfrow=c(2, 2))
@@ -196,9 +196,9 @@ We can now evaluate our assumptions after eliminating our most influential obser
 
 The normality assumption looks a little better when comparing the histograms, because without the influential points, the histogram is much more symmetric. However, the QQ plot looks the same between the two models.
 
-The last assumption focuses on the influential points, which was the whole reasoning of refitting our original model without outliers to see if they have been taken care of. The plots have not changed significantly. Overall, getting rid of the most influential points does not seem to make our assumptions much stronger, and therefore we do not see a reason to get rid of the most influential points. 
+The last assumption focuses on the influential points, which was the whole reason of refitting our original model without influential points. We see the plots have not changed significantly. Overall, getting rid of the most influential points does not seem to make our assumptions much stronger, and therefore we do not see a reason to get rid of the most influential points. 
 
-Finally, we will call the summary outputs of our model with the original data, and the model with the outliers removed:
+Finally, we will call the summary outputs of our model with the original data, and the model with the influential points removed:
 
 **Model with Original Data**
 ```{r, echo=FALSE}
