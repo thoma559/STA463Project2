@@ -40,7 +40,7 @@ salaries_data <- read.csv("salaries_data.csv")
 head(salaries_data)
 ```
 
-**In this project, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical disciplines versus for professors in the applied disciplines?**
+**In this project, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical disciplines versus professors in the applied disciplines?**
 
 ## Exploratory Data Analysis (EDA)
 To explore the data, we will first change the categorical predictors to be binary variables (0's and 1's) so that plotting the data is much easier. However, Rank will have 3 levels: Professor is level 3, Assistant Professor is level 2, and Associate Professor is 1:
@@ -64,7 +64,7 @@ From the scatter plot matrix, we can see that years since PhD and years of Servi
 There may also be correlation between years of service and salary, since these points follow a slight linear trend in the plots. The correlation coefficient for salary and years of service is 0.3, which suggests a fairly weak, positive linear trend between the two. Similarly, years since PhD and salary are also weakly linearly related as they have a correlation coefficient of 0.4.
 Looking at the categorical variables that include sex, rank, and discipline, we see some interesting trends. Sex seems to have a weak positive relation with salary, with years since PhD, and with years of service. This suggests that males are more likely to be paid more, have more experience in teaching, and have greater years since PhD compared to females. Rank also has a moderate positive relationship with salary, with years since PhD, and with years of service. This again could be a sign of multicollinearity between the predictor variables.
 
-In terms of our hypothesis question, iscipline of the professor has a very weak negative relation with salary, which suggests that professors in the applied field are likely to earn more than the professors in theoretical field. However, discipline of the professor has a weak positive relation with years of service, which suggests that the professors in the theoretical field are likely to have more experience compared to professors in the applied field. We will be looking further into these two relationships in our analysis.  
+In terms of our hypothesis question, discipline of the professor has a very weak negative relation with salary, which suggests that professors in the applied field are likely to earn more than the professors in theoretical field. However, discipline of the professor has a weak positive relation with years of service, which suggests that the professors in the theoretical field are likely to have more experience compared to professors in the applied field. We will be looking further into these two relationships in our analysis.  
 
 Now we will also look the distribution of salaries grouped by the two different disciplines:
 ```{r, echo=FALSE}
