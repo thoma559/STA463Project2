@@ -16,7 +16,7 @@ library(car)
 ```
 
 ## Introduction
-This project will explore a dataset concerning the 2008-2009 nine-month academic salaries for Assistant Professors, Associate Professors and Professors in a college in the U.S. The data consists of 397 observations with the predictor variables of interest as rank, discipline, years since Phd, years of service, and gender. The response variable is the nine-month salary of professors in dollars.
+This project will explore a dataset concerning the 2008-2009 nine-month academic salaries for Assistant Professors, Associate Professors, and Professors in a college in the U.S. The data consists of 397 observations with the predictor variables of interest as rank, discipline, years since Phd, years of service, and gender. The response variable is the nine-month salary of professors in dollars.
 
 The variables are defined as follows:
 
@@ -32,7 +32,7 @@ The variables are defined as follows:
   
   * X5 = sex (categorical: Female, Male)
 
-We will read in the data and look at the first few rows:
+We will read in the data and look at the first few rows to see how the data is formatted:
 ```{r, echo=FALSE}
 library(cli)
 library(dplyr)
@@ -40,12 +40,12 @@ salaries_data <- read.csv("salaries_data.csv")
 head(salaries_data)
 ```
 
-In this project, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical disciplines versus for professors in the applied disciplines?
+**In this project, we will perform a confirmatory multiple regression analysis to try to answer our hypothesis question: Does the relationship between years of service and salary differ for professors in the theoretical disciplines versus for professors in the applied disciplines?**
 
 ## Exploratory Data Analysis (EDA)
-To explore the data, we will first change the categorical predictors to be binary variables (0's and 1's). Rank will have 3 levels: Professor is level 3, Assistant Professor is level 2, and Associate Professor is 1:
+To explore the data, we will first change the categorical predictors to be binary variables (0's and 1's) so that plotting the data is much easier. However, Rank will have 3 levels: Professor is level 3, Assistant Professor is level 2, and Associate Professor is 1:
 ```{r, echo=FALSE}
-  salaries_data_new <- salaries_data %>%
+salaries_data_new <- salaries_data %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
   mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
   mutate(discipline = as.numeric(discipline)) %>% 
@@ -54,17 +54,17 @@ salaries_data_new$rank <- as.numeric(as.factor(salaries_data_new$rank))
 head(salaries_data_new)
 ```
 
-Then, we will look at the scatter plot matrix of our data along with the correlation matrix:
+Now that the data is properly formatted, we will look at the scatter plot matrix of our data along with the correlation matrix:
 ```{r, echo=FALSE}
 matrix <- pairs(~ salary + rank + discipline + yrs.since.phd + yrs.service + sex, data = salaries_data_new)
 cor(cbind(salaries_data_new$salary, salaries_data_new$rank, salaries_data_new$discipline, salaries_data_new$yrs.since.phd, salaries_data_new$yrs.service, salaries_data_new$sex))
 ```
 
-From the scatter plot matrix, we can see that years since PhD and years of Service are highly correlated with one another. This could be a sign of multicollinearity between the predictors. This result is further proven by the correlation matrix since the correlation coefficient for years of service and years since PhD is 0.9, which suggests a very strong, positive linear trend between the two variables. This suggests that we should only include one of the two variables in our model.
-There may also be correlation between years of service and salary, since these points follow a slight linear trend in the plots. The correlation coefficient for salary and years of service is 0.3, which suggests a fairly weak, positive linear trend between the two. Similarly, years since PhD and salary are also linearly related as they have a correlation coefficient of 0.4.
-Now, we look at categorical variables that include sex, rank and discipline. Sex seems to have a weak positive relation with salary, with years since PhD and with years of service. This suggests that males are more likely to be paid more, have more experience in teaching, and have greater years since PhD compared to females. Rank has a moderate positive relationship with salary, with years since PhD and with years of service. This could be a sign of multicollinearity between the predictor variables.
+From the scatter plot matrix, we can see that years since PhD and years of Service are highly correlated with one another. This could be a sign of multicollinearity between the predictors. This result is further proven by the correlation matrix since the correlation coefficient for years of service and years since PhD (in position [5, 4]) is 0.9, which suggests a very strong, positive linear trend between the two variables. This indicates that we should only include one of the two variables in our model.
+There may also be correlation between years of service and salary, since these points follow a slight linear trend in the plots. The correlation coefficient for salary and years of service is 0.3, which suggests a fairly weak, positive linear trend between the two. Similarly, years since PhD and salary are also weakly linearly related as they have a correlation coefficient of 0.4.
+Looking at the categorical variables that include sex, rank, and discipline, we see some interesting trends. Sex seems to have a weak positive relation with salary, with years since PhD, and with years of service. This suggests that males are more likely to be paid more, have more experience in teaching, and have greater years since PhD compared to females. Rank also has a moderate positive relationship with salary, with years since PhD, and with years of service. This again could be a sign of multicollinearity between the predictor variables.
 
-Discipline of the professor has a weak negative relation with salary which suggests that professors in the applied field are likely to earn more than the professors in theoretical field. However, discipline of the professor has a weak positive relation with years of service which suggests that the professors in the theoretical field are likely to have more experience compared to professors in the applied field. We would be looking further into these two relationships in our analysis.  
+In terms of our hypothesis question, iscipline of the professor has a very weak negative relation with salary, which suggests that professors in the applied field are likely to earn more than the professors in theoretical field. However, discipline of the professor has a weak positive relation with years of service, which suggests that the professors in the theoretical field are likely to have more experience compared to professors in the applied field. We will be looking further into these two relationships in our analysis.  
 
 Now we will also look the distribution of salaries grouped by the two different disciplines:
 ```{r, echo=FALSE}
@@ -75,21 +75,25 @@ salaries_data %>%
 
 From the box plots, we can see that the range of salaries for theoretical disciplines (A) and applied disciplines (B) are very similar. They both range from around 50,000 dollars to around 180,000 dollars. The mean salary for applied disciplines is slightly higher than the mean salary for theoretical disciplines. There are also more outliers in the theoretical discipline salary plot, but there is one possibly high leverage point in the applied disciplines plot that could be pulling the mean salary up towards itself. 
 
-So, we now know that although the means of salaries between the two disciplines seem close, they are not exactly the same. So, we will proceed to fit a model to reflect our hypothesis.
+So, we now know that although the means of salaries between the two disciplines seem close, they are not exactly the same. We will proceed to fit a model to reflect our hypothesis.
 
 ## Analysis
 
-After exploring our data, we see that there is a scope of multicollinearity between years of service and years since PhD. Thus, we decide to include only years of service in our model. Similarly, the correlation coefficients associated with the rank of the professor also showed signs of multicollinearity and hence, we decided to exclude it from our model (Appendix 1).
-Since we are trying to understand how the relationship between years of service and salary differ for applied and theoretical disciplines, we included the interaction term between years of service and discipline.
+After exploring our data, we see that there is a scope of multicollinearity between years of service and years since PhD. Thus, we decide to include only years of service in our model. Similarly, the correlation coefficients associated with the rank of the professor also showed signs of multicollinearity, and hence, we decided to exclude it from our model (Appendix 1).
 
-we now fit the multiple linear regression model as given below:
+Since we are trying to understand how the relationship between years of service and salary differ between the applied and theoretical disciplines, we include the interaction term between years of service and discipline.
 
-$$Y_i=\beta_0+\beta_1X_{1i}+\beta_2X_{2i} +\beta_3X_{3i} +\beta_4X_{1i}X_{2i}+\epsilon_i,\ i=1,...,397$$
-Here, $Y_i$ is the salary in dollars. $X_i$ is the years of service that the employee has worked, $X_{ii}$ is the discipline variable that indicates if the professor works in the theoretical department (A) or the applied department (B), $X_{iii}$ is the sex variable that indicates if the professor is a Male or Female. $\beta_0$ is the intercept term, $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline, $\beta_3$ is the slope for sex, and $\beta_4$ is the interaction between years of service and discipline.
+We now fit the multiple linear regression model as given below:
 
-For this model, we assume that the error terms ($\epsilon_i$) are normally distributed with mean 0 and variance $\sigma^2$ and $Cov(\epsilon_i,\epsilon_j) = 0$. 
+$$Y_i=\beta_0+\beta_1X_{1i}+\beta_2X_{2i} +\beta_3X_{3i} +\beta_4X_{1i}X_{2i}+\epsilon_i,\ where i=1,...,397$$
+Here, $Y_i$ is the salary in dollars. $X_{1i}$ is the years of service that the employee has worked, $X_{2i}$ is the discipline variable that indicates if the professor works in the theoretical department (A) or the applied department (B), $X_{3i}$ is the sex variable that indicates if the professor is a Male or Female. 
+
+$\beta_0$ is the intercept term, $\beta_1$ is the slope for years of service, $\beta_2$ is the slope for discipline, $\beta_3$ is the slope for sex, and $\beta_4$ is the slope for the interaction between years of service and discipline.
+
+For this model, we assume that the error terms ($\epsilon_i$) are normally distributed with mean 0 and variance $\sigma^2$ and $Cov(\epsilon_i,\epsilon_j) = 0$ for $i \neq j$. 
 
 ```{r, echo=FALSE}
+# Fitting the model
 salary.fit = lm(salary ~ yrs.service + discipline + sex + yrs.service:discipline, data = salaries_data)
 ```
 
@@ -103,7 +107,6 @@ abline(h=-3)
 qqnorm(rstandard(salary.fit))
 abline(a=0, b=1)
 hist(rstandard(salary.fit))
-
 par(mfrow=c(2,3))
 plot(salary.fit$fitted, rstandard(salary.fit), xlab='Fitted values', ylab='Standardized Residuals')
 plot(salaries_data$yrs.service, rstandard(salary.fit), xlab='yrs.service',
@@ -118,9 +121,13 @@ qqnorm(rstandard(salary.fit))
 qqline(rstandard(salary.fit))
 ```
 
-The model form assumption is met based on the scatterplot matrix above. There is slight fanning in a few of the plots, but for the most part, there is enough random scatter to say the model form is correct. The normality assumption is also met since the histogram of standardized residuals follows a roughly bell-shaped curve, and the points in the QQ plot do not deviate from the trend line. The constant variance assumption is also met since there is random scatter in the residuals plot. There does seem to be slight fanning, but not enough to be concerning. From the same plot, we also see that there could be potential outliers that are influential. We will investigate these points more in the plots below. We will also assume that these observations were obtained independently.
+The model form assumption is met based on the scatterplots above. There is slight fanning in a few of the plots, but for the most part, there is enough random scatter to say the model form is correct. The constant variance assumption is also met since there is random scatter in the residuals plot. There does seem to be slight fanning, but not enough to be concerning.
 
-We will check the Cook's Distance, DFBETAS, and DFFITS plots along with the Variance Inflation Factors (VIFs) to further investigate potential outliers:
+For the sake of this project, we will also assume that these observations were obtained independently. The normality assumption is also met since the histogram of standardized residuals follows a roughly bell-shaped curve, and the points in the QQ plot do not deviate from the trend line too much. Although there is slight skew in the tails of the line, it is nothing too concerning and we have enough data points to say that normality is met. 
+
+From the residuals plot, we see that there could be potential outliers that may be influential. We will investigate these points more in the plots below. 
+
+We will check the Cook's Distance, DFBETAS, and DFFITS plots, along with the Variance Inflation Factors (VIFs), to further investigate any potential outliers:
 
 ```{r, echo=FALSE, warning=FALSE}
 par(mfrow=c(2, 2))
@@ -135,14 +142,13 @@ plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
 vif(salary.fit)
 ```
 
-The way to measure whether a point has too high of leverage, is to use the equation $3*\frac{p}{n}$. In our case we have 5 β parameters and 397 observations. Therefore leverage points of greater than .03778 should be removed to evaluate how much of difference these observations have on the output.
-
+The way to measure whether a point has too high of leverage, is to use the equation $3*\frac{p}{n}$. In our case, $p = 5$ since we have five β parameters, and $n = 397$ since we have 397 observations. Therefore, leverage points of greater than 0.03778 should be removed to evaluate how big of an impact these observations have on the output.
 
 ```{r, echo=FALSE}
+# remove any outliers
 dataFrame <- salaries_data[abs(levs)<.03778,]
 fit <- lm(salary ~ yrs.service + discipline + sex + yrs.service:discipline, data = dataFrame)
-fit
-
+#fit
 dataFramesex <- dataFrame %>%
   mutate(discipline = ifelse(str_trim(discipline) == "A", "1", "0")) %>%
   mutate(sex = ifelse(str_trim(sex) == "Male", "1", "0")) %>% 
@@ -150,7 +156,9 @@ dataFramesex <- dataFrame %>%
   mutate(sex = as.numeric(sex))
 ```
 
-```{r, echo=FALSE, warning=FALSE, }
+Here are the same plots with any potential outliers removed:
+```{r, echo=FALSE, warning=FALSE}
+# replot with outliers removed
 par(mfrow=c(2, 2))
 levs=hatvalues(fit)
 plot(levs,ylab="leverages", xlab="observation")
@@ -160,12 +168,15 @@ dfbetas.mr = dfbetas(fit)
 plot(dfbetas.mr[,2], ylab="DFBETAS x1")
 cook.mr = cooks.distance(fit)
 plot(cook.mr,ylab="Cook's Distances", xlab="Observation")
+
+# VIFs
 vif(fit)
 ```
 
-We can see that our leverage plot looks much better with the high leverage points being eliminated so now we will look to see if our assumptions are stronger without the influential points.
+With the high leverage points being eliminated, we can see that our leverage plot looks much better. So now, we will look to see if our assumptions are stronger without the influential points.
 
 ```{r, echo=FALSE}
+# replot with assumption
 par(mfrow=c(2,3))
 plot(fit$fitted, rstandard(fit), xlab='Fitted values', ylab='Standardized Residuals')
 plot(dataFrame$yrs.service, rstandard(fit), xlab='yrs.service',
@@ -181,35 +192,42 @@ qqline(rstandard(fit))
 hist(rstandard(fit))
 ```
 
-We can now evaluate our assumptions based on eliminating our most influential observations from the data. To see if our assumptions have gotten better we will reevaluate them. We should look to see if the correct model and constant variance assumptions are met. Looking at the standardized residual plots we don't see too many trends that represent fanning or tunneling that are concerning so this assumption looks to be met. The data has a lot of data so the clustering of the data in the center is not of concern. Therefore comparing the graphs from all the observations we do not see much of a difference in our assumption of constant variance and model form. 
+We can now evaluate our assumptions after eliminating our most influential observations from the data to see if they have improved. We first look to see if the model form and constant variance assumptions are met. Looking at the standardized residual plots, we do not see too many trends that represent fanning or tunneling that are concerning, so the constant variance assumption looks to be met. The data has a lot of observations so the clustering of points in the center is not of concern. Therefore, comparing the graphs from all the observations, we do not see much of a difference in our assumptions of constant variance and model form. 
 
-The normality assumption looks a little better when comparing the histograms because without the influential points the histogram is much more symmetric. The QQ plot looks the same between the two models.
+The normality assumption looks a little better when comparing the histograms, because without the influential points, the histogram is much more symmetric. However, the QQ plot looks the same between the two models.
 
-The last assumption should focus on the influential points which was the whole point of this model so we know they have been taken care of. Therefore getting rid of the most influential points does not seem to make our assumptions much stronger and there does not seem to be a reason to get rid of this most influential points. 
+The last assumption focuses on the influential points, which was the whole reasoning of refitting our original model without outliers to see if they have been taken care of. The plots have not changed significantly. Overall, getting rid of the most influential points does not seem to make our assumptions much stronger, and therefore we do not see a reason to get rid of the most influential points. 
 
-Finally, we will call the summary output of our data:
+Finally, we will call the summary outputs of our model with the original data, and the model with the outliers removed:
+
+**Model with Original Data**
 ```{r, echo=FALSE}
 summary(salary.fit)
+```
+
+**Model with Outliers Removed**
+```{r, echo = FALSE}
 summary(fit)
 ```
-We can see that the summary outputs are very similar and again affirming out intuition that we do not need get rid of the most influential points. So we will now continue with the fitted model of all our observations.
+We can see that the summary outputs are very similar, which again affirms our intuition that we do not need get rid of the most influential points. So, we will now continue with the fitted model of all our observations (the original model).
 
 For our hypothesis question, we test the following hypotheses: 
-Null Hypothesis: $\beta_4 = 0$
-Alternate Hypothesis: $\beta_4 \neq 0$
 
-According to the output, we reject the null hypothesis as the p-value for the t-test is approximately 0.001 (less than 0.05).We conclude that the interaction term between years of service and discipline is statistically significant. 
+  * $H_0$: $\beta_4 = 0$
+  * $H_a$: $\beta_4 \neq 0$
+
+According to the above output, we reject the null hypothesis as the p-value for the t-test is approximately 0.001 (less than 0.05). We conclude that the interaction term between years of service and discipline is statistically significant. 
 
 Thus, for every one year increase in service, the increase in the mean salary of professors of a particular gender in an applied discipline would be 712.2 dollars more than the increase in the mean salary of professors of the same gender in a theoretical discipline. 
 
 So, the fitted model to predict the salary of a professor in a theoretical field would be: 
 
-$$\hat{Y_i}=90700.5+485.6X_i + 9060.4X_{iii},\ i=1,...,16$$
+$$\hat{Y_i}=90700.5+485.6X_{1i} + 9060.4X_{3i},\ i=1,...,397$$
 
 And the fitted model to predict the salary of a professor in an applied field would be: 
-$$\hat{Y_i}=(90700.5 + 392.9)+(485.6 + 392.9 )X_i + 9060.4X_{iii},\ i=1,...,16$$
-$$\hat{Y_i}=91093.4+878.5X_i + 9060.4X_{iii},\ i=1,...,16$$
-where $\hat{Y_i}$ is the estimated salary, $X_i$ is the years of service, and $X_{iii}$ is the sex variable. 
+$$\hat{Y_i}=(90700.5 + 392.9)+(485.6 + 392.9 )X_{1i} + 9060.4X_{3i},\ i=1,...,397$$
+$$\hat{Y_i}=91093.4+878.5X_{1i} + 9060.4X_{3i},\ i=1,...,397$$
+where $\hat{Y_i}$ is the estimated salary, $X_{1i}$ is the years of service, and $X_{3i}$ is the sex variable. 
 
 We also obtain the confidence interval of the interaction term between years of service and discipline. 
 
@@ -218,17 +236,18 @@ confint(salary.fit)
 ```
 
 From this interval, we are 95% confident that for every one year increase in service, the increase in the mean salary of professors of a particular gender in an applied field would be between 288.93 and 1135.56 dollars more than the increase in the mean salary of professors of the same gender in a theoretical field. 
-Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary does differ for professors in applied and theoretical fields.
+
+Since 0 is not within the interval, we can again conclude that the relationship between years of service and salary does indeed differ for professors in applied and theoretical fields.
 
 ## Conclusion
 
 Based on our results, we can conclude that the increase in salary per year of service is higher for professors within the applied field as compared to professors in the theoretical field. This means that a professor in an applied field has a higher earning curve as compared to the professors in a theoretical field. For instance, if two professors of the same gender join the university with the same starting salary, the professor teaching in an applied field will have a higher salary compared to the professor teaching in a theoretical field as more years pass by.   
 
-A possible limitation of this project is that there is ambiguity about how the data was collected. We assumed previously that all observations were independent although it is not completely clear how it was collected. However, since the dataset is so large, we think it is safe to make this assumption for the sake of our model. 
+A possible limitation of this project is that there is ambiguity about how the data was collected. We assumed previously that all observations were independent, although it is not completely clear how it was collected. However, since the dataset is so large, we think it is safe to make this assumption for the sake of our model. 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Appendix 
+## Appendix 1
 
 If we include rank in our model, we see fanning in the residuals plot and this suggests that the model form is incorrect and constant variance assumption is not met. 
 
