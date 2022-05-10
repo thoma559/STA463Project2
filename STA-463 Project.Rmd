@@ -205,7 +205,7 @@ Finally, we will call the summary outputs of our model with the original data, a
 summary(salary.fit)
 ```
 
-**Model with Outliers Removed**
+**Model with Influential Points Removed**
 ```{r, echo = FALSE}
 summary(fit)
 ```
